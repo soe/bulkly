@@ -91,14 +91,7 @@ class Bulk(object):
         r = requests.post(url, headers = headers, data = data)
 
         if r.status_code == 201:
-
-            xmltree = parseString(r.text)
-
-            job_id = xmltree.getElementsByTagName('id')[0].childNodes[0].wholeText
-
-            print 'create_job successful'
-            print r.text
-
+            self.show_failed_message(inspect.stack()[0][3], r)
         else:
             self.show_failed_message(inspect.stack()[0][3], r)
 
@@ -117,14 +110,7 @@ class Bulk(object):
         r = requests.get(url, headers = headers, data = data)
 
         if r.status_code == 200:
-
-            xmltree = parseString(r.text)
-
-            job_id = xmltree.getElementsByTagName('id')[0].childNodes[0].wholeText
-
-            print 'get_job successful'
-            print r.text
-
+            self.show_failed_message(inspect.stack()[0][3], r)
         else:
             self.show_failed_message(inspect.stack()[0][3], r)
 
@@ -147,14 +133,7 @@ class Bulk(object):
         r = requests.post(url, headers = headers, data = data)
 
         if r.status_code == 200:
-
-            xmltree = parseString(r.text)
-
-            job_id = xmltree.getElementsByTagName('id')[0].childNodes[0].wholeText
-
-            print 'close_job successful'
-            print r.text
-
+            self.show_failed_message(inspect.stack()[0][3], r)
         else:
             self.show_failed_message(inspect.stack()[0][3], r)
 
@@ -177,14 +156,7 @@ class Bulk(object):
         r = requests.post(url, headers = headers, data = data)
 
         if r.status_code == 200:
-
-            xmltree = parseString(r.text)
-
-            job_id = xmltree.getElementsByTagName('id')[0].childNodes[0].wholeText
-
-            print 'abort_job successful'
-            print r.text
-
+            self.show_failed_message(inspect.stack()[0][3], r)
         else:
             self.show_failed_message(inspect.stack()[0][3], r)
 
@@ -204,14 +176,7 @@ class Bulk(object):
         r = requests.post(url, headers = headers, data = data, files = {'file': open(fileName)})
 
         if r.status_code == 201:
-
-            xmltree = parseString(r.text)
-
-            batch_id = xmltree.getElementsByTagName('id')[0].childNodes[0].wholeText
-
-            print 'add_batch successful'
-            print r.text
-
+            self.show_failed_message(inspect.stack()[0][3], r)
         else:
             self.show_failed_message(inspect.stack()[0][3], r)
 
@@ -230,14 +195,7 @@ class Bulk(object):
         r = requests.get(url, headers = headers, data = data)
 
         if r.status_code == 200:
-
-            xmltree = parseString(r.text)
-
-            batch_id = xmltree.getElementsByTagName('id')[0].childNodes[0].wholeText
-
-            print 'get_batch successful'
-            print r.text
-
+            self.show_failed_message(inspect.stack()[0][3], r)
         else:
             self.show_failed_message(inspect.stack()[0][3], r)
 
@@ -256,14 +214,7 @@ class Bulk(object):
         r = requests.get(url, headers = headers, data = data)
 
         if r.status_code == 200:
-
-            xmltree = parseString(r.text)
-
-            batch_id = xmltree.getElementsByTagName('id')[0].childNodes[0].wholeText
-
-            print 'get_batch successful'
-            print r.text
-
+            self.show_failed_message(inspect.stack()[0][3], r)
         else:
             self.show_failed_message(inspect.stack()[0][3], r)
 
@@ -282,10 +233,7 @@ class Bulk(object):
         r = requests.get(url, headers = headers, data = data)
 
         if r.status_code == 200:
-
-            print 'get_batch_request successful'
-            print r.text
-
+            self.show_failed_message(inspect.stack()[0][3], r)
         else:
             self.show_failed_message(inspect.stack()[0][3], r)
 
@@ -304,15 +252,16 @@ class Bulk(object):
         r = requests.get(url, headers = headers, data = data)
 
         if r.status_code == 200:
-
-            print 'get_batch_result successful'
-            print r.text
-
+            self.show_failed_message(inspect.stack()[0][3], r)
         else:
             self.show_failed_message(inspect.stack()[0][3], r)
 
         return r
 
+    def show_successful_message(self, functionName, r):
+        print functionName + ' - successful'
+        print r.text
+        
     def show_failed_message(self, functionName, r):
         print functionName + ' - failed'
         print 'status_code: %s, reason: %s' % (r.status_code, r.reason)
