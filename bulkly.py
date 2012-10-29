@@ -5,6 +5,7 @@ import requests
 import simplejson as json
 
 from xml.dom.minidom import parseString
+import inspect
 
 LOGIN_ENDPOINT = 'https://login.salesforce.com/services/Soap/u/26.0'
 BULK_ENDPOINT = 'https://%(instance)s.salesforce.com/services/async/26.0/job'
@@ -46,9 +47,7 @@ def login(username, password):
         print 'serverUrl: %s' % serverUrl
     
     else: 
-        print 'login failed' 
-        print 'status_code: %s, reason: %s' % (r.status_code, r.reason)
-        print 'body: %s' % r.text 
+        show_failed_message(inspect.stack()[0][3], r) 
     
     return r
     
@@ -84,9 +83,7 @@ def create_job(instance, sessionId, jobObject, jobType):
         print r.text
         
     else:
-        print 'create_job failed' 
-        print 'status_code: %s, reason: %s' % (r.status_code, r.reason) 
-        print 'body: %s' % r.text        
+        show_failed_message(inspect.stack()[0][3], r)      
     
     return r
 
@@ -112,9 +109,7 @@ def get_job(instance, sessionId, jobId):
         print r.text
 
     else:
-        print 'get_job failed' 
-        print 'status_code: %s, reason: %s' % (r.status_code, r.reason)
-        print 'body: %s' % r.text 
+        show_failed_message(inspect.stack()[0][3], r)  
             
 def close_job(instance, sessionId, jobId):
     '''http://www.salesforce.com/us/developer/docs/api_asynch/Content/asynch_api_jobs_close.htm'''
@@ -144,9 +139,7 @@ def close_job(instance, sessionId, jobId):
         print r.text
 
     else:
-        print 'close_job failed' 
-        print 'status_code: %s, reason: %s' % (r.status_code, r.reason)
-        print 'body: %s' % r.text 
+        show_failed_message(inspect.stack()[0][3], r) 
 
 def abort_job(instance, sessionId, jobId):
     '''http://www.salesforce.com/us/developer/docs/api_asynch/Content/asynch_api_jobs_abort.htm'''
@@ -176,9 +169,7 @@ def abort_job(instance, sessionId, jobId):
         print r.text
 
     else:
-        print 'abort_job failed' 
-        print 'status_code: %s, reason: %s' % (r.status_code, r.reason)
-        print 'body: %s' % r.text 
+        show_failed_message(inspect.stack()[0][3], r) 
             
 def add_batch(instance, sessionId, jobId, fileName, fileType):
     '''http://www.salesforce.com/us/developer/docs/api_asynch/Content/asynch_api_batches_create.htm'''
@@ -205,9 +196,7 @@ def add_batch(instance, sessionId, jobId, fileName, fileType):
         print r.text
         
     else:
-        print 'add_batch failed' 
-        print 'status_code: %s, reason: %s' % (r.status_code, r.reason)
-        print 'body: %s' % r.text        
+        show_failed_message(inspect.stack()[0][3], r)      
     
     return r
         
@@ -233,9 +222,7 @@ def get_batches(instance, sessionId, jobId):
         print r.text
         
     else:
-        print 'get_batches failed' 
-        print 'status_code: %s, reason: %s' % (r.status_code, r.reason)
-        print 'body: %s' % r.text         
+        show_failed_message(inspect.stack()[0][3], r)         
     
     return r
         
@@ -261,9 +248,7 @@ def get_batch(instance, sessionId, jobId, batchId):
         print r.text
         
     else:
-        print 'get_batch failed' 
-        print 'status_code: %s, reason: %s' % (r.status_code, r.reason)
-        print 'body: %s' % r.text         
+        show_failed_message(inspect.stack()[0][3], r)          
     
     return r
 
@@ -285,9 +270,7 @@ def get_batch_request(instance, sessionId, jobId, batchId):
         print r.text
 
     else:
-        print 'get_batch_request failed' 
-        print 'status_code: %s, reason: %s' % (r.status_code, r.reason)
-        print 'body: %s' % r.text      
+        show_failed_message(inspect.stack()[0][3], r)       
 
     return r
         
@@ -309,8 +292,11 @@ def get_batch_result(instance, sessionId, jobId, batchId):
         print r.text
         
     else:
-        print 'get_batch_result failed' 
-        print 'status_code: %s, reason: %s' % (r.status_code, r.reason)
-        print 'body: %s' % r.text       
+        show_failed_message(inspect.stack()[0][3], r)       
     
-    return r    
+    return r
+    
+def show_failed_message(functionName, r):
+    print functionName + ' - failed' 
+    print 'status_code: %s, reason: %s' % (r.status_code, r.reason)
+    print 'body: %s' % r.text
