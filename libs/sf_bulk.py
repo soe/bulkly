@@ -16,7 +16,7 @@ class Bulk(object):
     def __init__(self):
         self.username = ''
         self.password = ''
-        self.instance = 'na11-api'
+        self.instance = ''
         self.sessionId = ''
 
 
@@ -60,6 +60,7 @@ class Bulk(object):
             print 'serverUrl: %s' % serverUrl
 
             self.sessionId = sessionId
+            self.instance = serverUrl.split('.salesforce.com')[0].split('https://')[1]
 
             return (sessionId, serverUrl)
 
@@ -170,11 +171,16 @@ class Bulk(object):
             'X-SFDC-Session': self.sessionId
         }
 
-        data = {'title': fileName}
+        data = {}
         url = BULK_ENDPOINT % {'instance': self.instance} + '/'+ jobId + '/batch'
+        
+        f = open(fileName, 'rb')
 
-        r = requests.post(url, headers = headers, data = data, files = {'file': open(fileName)})
-
+        #r = requests.post(url, headers = headers, data = data, files = {'file': f})
+        r = requests.post(url, headers = headers, data = f.read())
+        
+        f.close()
+        
         if r.status_code == 201:
             self.show_successful_message(inspect.stack()[0][3], r)
         else:
