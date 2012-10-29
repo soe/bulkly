@@ -91,7 +91,7 @@ class Bulk(object):
         r = requests.post(url, headers = headers, data = data)
 
         if r.status_code == 201:
-            self.show_failed_message(inspect.stack()[0][3], r)
+            self.show_successful_message(inspect.stack()[0][3], r)
         else:
             self.show_failed_message(inspect.stack()[0][3], r)
 
@@ -110,7 +110,7 @@ class Bulk(object):
         r = requests.get(url, headers = headers, data = data)
 
         if r.status_code == 200:
-            self.show_failed_message(inspect.stack()[0][3], r)
+            self.show_successful_message(inspect.stack()[0][3], r)
         else:
             self.show_failed_message(inspect.stack()[0][3], r)
 
@@ -133,7 +133,7 @@ class Bulk(object):
         r = requests.post(url, headers = headers, data = data)
 
         if r.status_code == 200:
-            self.show_failed_message(inspect.stack()[0][3], r)
+            self.show_successful_message(inspect.stack()[0][3], r)
         else:
             self.show_failed_message(inspect.stack()[0][3], r)
 
@@ -156,7 +156,7 @@ class Bulk(object):
         r = requests.post(url, headers = headers, data = data)
 
         if r.status_code == 200:
-            self.show_failed_message(inspect.stack()[0][3], r)
+            self.show_successful_message(inspect.stack()[0][3], r)
         else:
             self.show_failed_message(inspect.stack()[0][3], r)
 
@@ -176,7 +176,7 @@ class Bulk(object):
         r = requests.post(url, headers = headers, data = data, files = {'file': open(fileName)})
 
         if r.status_code == 201:
-            self.show_failed_message(inspect.stack()[0][3], r)
+            self.show_successful_message(inspect.stack()[0][3], r)
         else:
             self.show_failed_message(inspect.stack()[0][3], r)
 
@@ -195,7 +195,7 @@ class Bulk(object):
         r = requests.get(url, headers = headers, data = data)
 
         if r.status_code == 200:
-            self.show_failed_message(inspect.stack()[0][3], r)
+            self.show_successful_message(inspect.stack()[0][3], r)
         else:
             self.show_failed_message(inspect.stack()[0][3], r)
 
@@ -214,7 +214,7 @@ class Bulk(object):
         r = requests.get(url, headers = headers, data = data)
 
         if r.status_code == 200:
-            self.show_failed_message(inspect.stack()[0][3], r)
+            self.show_successful_message(inspect.stack()[0][3], r)
         else:
             self.show_failed_message(inspect.stack()[0][3], r)
 
@@ -233,7 +233,7 @@ class Bulk(object):
         r = requests.get(url, headers = headers, data = data)
 
         if r.status_code == 200:
-            self.show_failed_message(inspect.stack()[0][3], r)
+            self.show_successful_message(inspect.stack()[0][3], r)
         else:
             self.show_failed_message(inspect.stack()[0][3], r)
 
@@ -252,7 +252,7 @@ class Bulk(object):
         r = requests.get(url, headers = headers, data = data)
 
         if r.status_code == 200:
-            self.show_failed_message(inspect.stack()[0][3], r)
+            self.show_successful_message(inspect.stack()[0][3], r)
         else:
             self.show_failed_message(inspect.stack()[0][3], r)
 

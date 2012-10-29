@@ -107,6 +107,20 @@ def show_menu():
                 _create_job()
             elif choice == 2:
                 _get_job()
+            elif choice == 3:
+                _close_job()
+            elif choice == 4:
+                _abort_job()
+            elif choice == 5:
+                _add_batch()
+            elif choice == 6:
+                _get_batches()
+            elif choice == 7:
+                _get_batch()
+            elif choice == 8:
+                _get_batch_request()
+            elif choice == 9:
+                _get_batch_result()
             elif choice == 0:
                 print '\nGoodbye.'
                 return
