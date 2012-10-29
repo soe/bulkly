@@ -2,5 +2,6 @@ This command line appplication is written in Python. This app allows CRUD operat
 
 In your terminal, go to the bulkly folder
 > cd bulkly
+
 Then run the following
 > python bulkly.py
