@@ -10,6 +10,7 @@ LOGIN_ENDPOINT = 'https://login.salesforce.com/services/Soap/u/26.0'
 BULK_ENDPOINT = 'https://%(instance)s.salesforce.com/services/async/26.0/job'
 
 def login(username, password):
+    '''http://www.salesforce.com/us/developer/docs/api_asynch/Content/asynch_api_quickstart_login.htm'''
     
     xml_template = '''<?xml version="1.0" encoding="utf-8" ?>
     <env:Envelope xmlns:xsd="http://www.w3.org/2001/XMLSchema"
@@ -50,7 +51,10 @@ def login(username, password):
     
     return r
     
-def create_job(instance, sessionId):
+def create_job(instance, sessionId, jobObject, jobType):
+    '''http://www.salesforce.com/us/developer/docs/api_asynch/Content/asynch_api_quickstart_create_job.htm'''
+    
+    jobTypes = {'CSV': 'text/csv', 'XML': 'text/xml', 'ZIP_CSV': 'zip/csv', 'ZIP_XML': 'zip/xml'}
     
     xml_template = '''<?xml version="1.0" encoding="UTF-8"?>
     <jobInfo xmlns="http://www.force.com/2009/06/asyncapi/dataload">
@@ -64,7 +68,7 @@ def create_job(instance, sessionId):
         'X-SFDC-Session': sessionId
     }
     
-    data = xml_template % {'operation': 'insert', 'object': 'Contact', 'contentType': 'CSV'}
+    data = xml_template % {'operation': 'insert', 'object': jobObject, 'contentType': jobType}
     url = BULK_ENDPOINT % {'instance': instance}
     
     r = requests.post(url, headers = headers, data = data)
@@ -84,10 +88,13 @@ def create_job(instance, sessionId):
     
     return r
 
-def add_batch(instance, sessionId, jobId, fileName):
+def add_batch(instance, sessionId, jobId, fileName, fileType):
+    '''http://www.salesforce.com/us/developer/docs/api_asynch/Content/asynch_api_quickstart_add_batch.htm'''
 
+    fileTypes = {'CSV': 'text/csv', 'XML': 'text/xml', 'ZIP_CSV': 'zip/csv', 'ZIP_XML': 'zip/xml'}
+    
     headers = {
-        'Content-Type': 'text/csv; charset=UTF-8', 
+        'Content-Type': fileTypes[fileType] +'; charset=UTF-8', 
         'X-SFDC-Session': sessionId
     }
     
@@ -112,6 +119,7 @@ def add_batch(instance, sessionId, jobId, fileName):
     return r
         
 def close_job(instance, sessionId, jobId):
+    '''http://www.salesforce.com/us/developer/docs/api_asynch/Content/asynch_api_quickstart_close_job.htm'''
     
     xml_template = '''<?xml version="1.0" encoding="UTF-8"?>
     <jobInfo xmlns="http://www.force.com/2009/06/asyncapi/dataload">
@@ -141,6 +149,7 @@ def close_job(instance, sessionId, jobId):
         print 'status_code: %s, reason: %s' % (r.status_code, r.reason)        
 
 def check_batches(instance, sessionId, jobId):
+    '''http://www.salesforce.com/us/developer/docs/api_asynch/Content/asynch_api_quickstart_check_status.htm'''
 
     headers = {
         'X-SFDC-Session': sessionId
@@ -167,6 +176,7 @@ def check_batches(instance, sessionId, jobId):
     return r
         
 def check_batch(instance, sessionId, jobId, batchId):
+    '''http://www.salesforce.com/us/developer/docs/api_asynch/Content/asynch_api_quickstart_check_status.htm'''
 
     headers = {
         'X-SFDC-Session': sessionId
@@ -193,4 +203,24 @@ def check_batch(instance, sessionId, jobId, batchId):
     return r
 
 def retrieve_batch(instance, sessionId, jobId, batchId):
-    pass    
+    '''www.salesforce.com/us/developer/docs/api_asynch/Content/asynch_api_quickstart_retrieve_results.htm'''
+
+    headers = {
+        'X-SFDC-Session': sessionId
+    }
+    
+    data = {}
+    url = BULK_ENDPOINT % {'instance': instance} + '/'+ jobId + '/batch/' + batchId + '/result'
+    
+    r = requests.get(url, headers = headers, data = data)
+
+    if r.status_code == 200:
+        
+        print 'check_batch successful'
+        print r.text
+        
+    else:
+        print 'check_batch failed' 
+        print 'status_code: %s, reason: %s' % (r.status_code, r.reason)        
+    
+    return r    
