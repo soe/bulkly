@@ -5,31 +5,61 @@ import requests
 import simplejson as json
 import urllib
 
-AUTH_ENDPOINT = 'https://login.salesforce.com/services/oauth2/token'
-
-CLIENT_ID = '3MVG99qusVZJwhskz0FeVuqB0cuGHEyLIjaXu7IiufybfuF8HDUx0WMBGClbdUhWj86J44Sico.Y41E4UOheM'
-CLIENT_SECRET = '2042840911220509737'
+LOGIN_ENDPOINT = 'https://login.salesforce.com/services/Soap/u/26.0'
+BULK_ENDPOINT = 'https://%(instance)s.salesforce.com/services/async/26.0/job'
 
 def login(username, password):
     
-    payload = {
-        'username': username,
-        'password': password,
-        'client_id': CLIENT_ID,
-        'client_secret': CLIENT_SECRET,
-        'grant_type': 'password'
-    }
+    xml_template = '''<?xml version="1.0" encoding="utf-8" ?>
+    <env:Envelope xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:env="http://schemas.xmlsoap.org/soap/envelope/">
+      <env:Body>
+        <n1:login xmlns:n1="urn:partner.soap.sforce.com">
+          <n1:username>%(username)s</n1:username>
+          <n1:password>%(password)s</n1:password>
+        </n1:login>
+      </env:Body>
+    </env:Envelope>'''
+    
+    data = { 'username': username, 'password': password }
     
     headers = {
-        'Content-type': 'application/x-www-form-urlencoded'
+        'SOAPAction': 'login', 
+        'Content-Type': 'text/xml; charset=UTF-8', 
     }
     
-    r = requests.post(AUTH_ENDPOINT, data = urllib.urlencode(), headers = headers)
+    url = LOGIN_ENDPOINT
+    
+    r = requests.post(url, headers = headers, data = xml_template%data)
     
     print r.text
     
-def create():
-    pass
+    return r
+    
+def create(instance, sessionId):
+    
+    xml_template = '''<?xml version="1.0" encoding="UTF-8"?>
+    <jobInfo xmlns="http://www.force.com/2009/06/asyncapi/dataload">
+        <operation>%(operation)s</operation>
+        <object>%(object)s</object>
+        <contentType>%(contentType)s</contentType>
+    </jobInfo>'''
+    
+    data = {'operation': 'insert', 'object': 'Contact', 'contentType': 'CSV'}
+    
+    headers = {
+        'Content-Type': 'text/xml; charset=UTF-8', 
+        'Authorization': 'Bearer '+ sessionId
+    }
+    
+    url = BULK_ENDPOINT%{'instance': instance}
+    
+    r = requests.post(url, headers = headers, data = xml_template%data)
+    
+    print r.text
+    
+    return r
     
 def read():
     pass
