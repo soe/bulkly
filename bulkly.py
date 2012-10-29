@@ -23,8 +23,6 @@ def login(username, password):
       </env:Body>
     </env:Envelope>'''
     
-    data = { 'username': username, 'password': password }
-    
     headers = {
         'SOAPAction': 'login', 
         'Content-Type': 'text/xml; charset=UTF-8', 
@@ -32,7 +30,8 @@ def login(username, password):
     
     url = LOGIN_ENDPOINT
     
-    r = requests.post(url, headers = headers, data = xml_template%data)
+    data = xml_template % {'username': username, 'password': password}
+    r = requests.post(url, headers = headers, data = data)
     
     if r.status_code == 200:
     
@@ -51,7 +50,7 @@ def login(username, password):
     
     return r
     
-def create(instance, sessionId):
+def create_job(instance, sessionId):
     
     xml_template = '''<?xml version="1.0" encoding="UTF-8"?>
     <jobInfo xmlns="http://www.force.com/2009/06/asyncapi/dataload">
@@ -60,34 +59,138 @@ def create(instance, sessionId):
         <contentType>%(contentType)s</contentType>
     </jobInfo>'''
     
-    data = {'operation': 'insert', 'object': 'Contact', 'contentType': 'CSV'}
-    
     headers = {
         'Content-Type': 'application/xml; charset=UTF-8', 
         'X-SFDC-Session': sessionId
     }
     
-    url = BULK_ENDPOINT%{'instance': instance}
+    data = xml_template % {'operation': 'insert', 'object': 'Contact', 'contentType': 'CSV'}
+    url = BULK_ENDPOINT % {'instance': instance}
     
-    r = requests.post(url, headers = headers, data = xml_template%data)
+    r = requests.post(url, headers = headers, data = data)
     
-    if r.status_code == 200:
-        print 'create successful'
+    if r.status_code == 201:
+        
+        xmltree = parseString(r.text)
+        
+        job_id = xmltree.getElementsByTagName('id')[0].childNodes[0].wholeText
+        
+        print 'create_job successful'
         print r.text
         
     else:
-        print 'create failed' 
+        print 'create_job failed' 
         print 'status_code: %s, reason: %s' % (r.status_code, r.reason)        
     
     return r
+
+def add_batch(instance, sessionId, jobId, fileName):
+
+    headers = {
+        'Content-Type': 'text/csv; charset=UTF-8', 
+        'X-SFDC-Session': sessionId
+    }
     
-def read():
-    pass
+    data = {'title': fileName}
+    url = BULK_ENDPOINT % {'instance': instance} + '/'+ jobId + '/batch'
     
-def update():
-    pass
+    r = requests.post(url, headers = headers, data = data, files = {'file': open(fileName)})
+
+    if r.status_code == 201:
+        
+        xmltree = parseString(r.text)
+        
+        batch_id = xmltree.getElementsByTagName('id')[0].childNodes[0].wholeText
+        
+        print 'add_batch successful'
+        print r.text
+        
+    else:
+        print 'add_batch failed' 
+        print 'status_code: %s, reason: %s' % (r.status_code, r.reason)        
     
-def delete():
-    pass
+    return r
+        
+def close_job(instance, sessionId, jobId):
     
+    xml_template = '''<?xml version="1.0" encoding="UTF-8"?>
+    <jobInfo xmlns="http://www.force.com/2009/06/asyncapi/dataload">
+      <state>Closed</state>
+    </jobInfo>'''
+        
+    headers = {
+        'Content-Type': 'application/xml; charset=UTF-8', 
+        'X-SFDC-Session': sessionId
+    }
     
+    url = BULK_ENDPOINT % {'instance': instance} + '/'+ jobId
+    
+    r = requests.post(url, headers = headers, data = xml_template)
+    
+    if r.status_code == 201:
+        
+        xmltree = parseString(r.text)
+        
+        job_id = xmltree.getElementsByTagName('id')[0].childNodes[0].wholeText
+        
+        print 'close_job successful'
+        print r.text
+        
+    else:
+        print 'close_job failed' 
+        print 'status_code: %s, reason: %s' % (r.status_code, r.reason)        
+
+def check_batches(instance, sessionId, jobId):
+
+    headers = {
+        'X-SFDC-Session': sessionId
+    }
+    
+    data = {}
+    url = BULK_ENDPOINT % {'instance': instance} + '/'+ jobId + '/batch'
+    
+    r = requests.get(url, headers = headers, data = data)
+
+    if r.status_code == 200:
+        
+        xmltree = parseString(r.text)
+        
+        batch_id = xmltree.getElementsByTagName('id')[0].childNodes[0].wholeText
+        
+        print 'check_batch successful'
+        print r.text
+        
+    else:
+        print 'check_batches failed' 
+        print 'status_code: %s, reason: %s' % (r.status_code, r.reason)        
+    
+    return r
+        
+def check_batch(instance, sessionId, jobId, batchId):
+
+    headers = {
+        'X-SFDC-Session': sessionId
+    }
+    
+    data = {}
+    url = BULK_ENDPOINT % {'instance': instance} + '/'+ jobId + '/batch/' + batchId
+    
+    r = requests.get(url, headers = headers, data = data)
+
+    if r.status_code == 200:
+        
+        xmltree = parseString(r.text)
+        
+        batch_id = xmltree.getElementsByTagName('id')[0].childNodes[0].wholeText
+        
+        print 'check_batch successful'
+        print r.text
+        
+    else:
+        print 'check_batch failed' 
+        print 'status_code: %s, reason: %s' % (r.status_code, r.reason)        
+    
+    return r
+
+def retrieve_batch(instance, sessionId, jobId, batchId):
+    pass    
