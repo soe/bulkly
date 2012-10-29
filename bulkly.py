@@ -28,7 +28,7 @@ def _close_job():
     BULK.close_job(jobId)
 
 # Choice 4
-def _abort_job()::
+def _abort_job():
     jobId = raw_input('Enter job ID to abort: ')
 
     BULK.abort_job(jobId)
