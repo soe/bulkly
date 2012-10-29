@@ -313,7 +313,7 @@ class Bulk(object):
 
         return r
 
-    def show_failed_message(functionName, r):
+    def show_failed_message(self, functionName, r):
         print functionName + ' - failed'
         print 'status_code: %s, reason: %s' % (r.status_code, r.reason)
         print 'body: %s' % r.text

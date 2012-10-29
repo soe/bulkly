@@ -137,7 +137,7 @@ def main():
         user = raw_input('Please enter your username: ')
 
     while not pw:
-        pw = getpass.getpass()
+        pw = getpass.getpass('Please enter your password: ')
         if not pw:
             print 'Password cannot be blank.'
 
