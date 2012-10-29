@@ -48,11 +48,12 @@ def login(username, password):
     else: 
         print 'login failed' 
         print 'status_code: %s, reason: %s' % (r.status_code, r.reason)
+        print 'body: %s' % r.text 
     
     return r
     
 def create_job(instance, sessionId, jobObject, jobType):
-    '''http://www.salesforce.com/us/developer/docs/api_asynch/Content/asynch_api_quickstart_create_job.htm'''
+    '''http://www.salesforce.com/us/developer/docs/api_asynch/Content/asynch_api_jobs_create.htm'''
     
     jobTypes = {'CSV': 'text/csv', 'XML': 'text/xml', 'ZIP_CSV': 'zip/csv', 'ZIP_XML': 'zip/xml'}
     
@@ -84,12 +85,103 @@ def create_job(instance, sessionId, jobObject, jobType):
         
     else:
         print 'create_job failed' 
-        print 'status_code: %s, reason: %s' % (r.status_code, r.reason)        
+        print 'status_code: %s, reason: %s' % (r.status_code, r.reason) 
+        print 'body: %s' % r.text        
     
     return r
 
+def get_job(instance, sessionId, jobId):
+    '''http://www.salesforce.com/us/developer/docs/api_asynch/Content/asynch_api_jobs_get_details.htm'''
+
+    headers = {
+        'X-SFDC-Session': sessionId
+    }
+
+    url = BULK_ENDPOINT % {'instance': instance} + '/'+ jobId
+
+    data = {}
+    r = requests.get(url, headers = headers, data = data)
+
+    if r.status_code == 200:
+
+        xmltree = parseString(r.text)
+
+        job_id = xmltree.getElementsByTagName('id')[0].childNodes[0].wholeText
+
+        print 'get_job successful'
+        print r.text
+
+    else:
+        print 'get_job failed' 
+        print 'status_code: %s, reason: %s' % (r.status_code, r.reason)
+        print 'body: %s' % r.text 
+            
+def close_job(instance, sessionId, jobId):
+    '''http://www.salesforce.com/us/developer/docs/api_asynch/Content/asynch_api_jobs_close.htm'''
+
+    xml_template = '''<?xml version="1.0" encoding="UTF-8"?>
+    <jobInfo xmlns="http://www.force.com/2009/06/asyncapi/dataload">
+      <state>Closed</state>
+    </jobInfo>'''
+
+    headers = {
+        'Content-Type': 'application/xml; charset=UTF-8', 
+        'X-SFDC-Session': sessionId
+    }
+
+    data = xml_template
+    url = BULK_ENDPOINT % {'instance': instance} + '/'+ jobId
+
+    r = requests.post(url, headers = headers, data = data)
+
+    if r.status_code == 200:
+
+        xmltree = parseString(r.text)
+
+        job_id = xmltree.getElementsByTagName('id')[0].childNodes[0].wholeText
+
+        print 'close_job successful'
+        print r.text
+
+    else:
+        print 'close_job failed' 
+        print 'status_code: %s, reason: %s' % (r.status_code, r.reason)
+        print 'body: %s' % r.text 
+
+def abort_job(instance, sessionId, jobId):
+    '''http://www.salesforce.com/us/developer/docs/api_asynch/Content/asynch_api_jobs_abort.htm'''
+
+    xml_template = '''<?xml version="1.0" encoding="UTF-8"?>
+    <jobInfo xmlns="http://www.force.com/2009/06/asyncapi/dataload">
+      <state>Aborted</state>
+    </jobInfo>'''
+
+    headers = {
+        'Content-Type': 'application/xml; charset=UTF-8', 
+        'X-SFDC-Session': sessionId
+    }
+
+    data = xml_template
+    url = BULK_ENDPOINT % {'instance': instance} + '/'+ jobId
+
+    r = requests.post(url, headers = headers, data = data)
+
+    if r.status_code == 200:
+
+        xmltree = parseString(r.text)
+
+        job_id = xmltree.getElementsByTagName('id')[0].childNodes[0].wholeText
+
+        print 'abort_job successful'
+        print r.text
+
+    else:
+        print 'abort_job failed' 
+        print 'status_code: %s, reason: %s' % (r.status_code, r.reason)
+        print 'body: %s' % r.text 
+            
 def add_batch(instance, sessionId, jobId, fileName, fileType):
-    '''http://www.salesforce.com/us/developer/docs/api_asynch/Content/asynch_api_quickstart_add_batch.htm'''
+    '''http://www.salesforce.com/us/developer/docs/api_asynch/Content/asynch_api_batches_create.htm'''
 
     fileTypes = {'CSV': 'text/csv', 'XML': 'text/xml', 'ZIP_CSV': 'zip/csv', 'ZIP_XML': 'zip/xml'}
     
@@ -114,42 +206,13 @@ def add_batch(instance, sessionId, jobId, fileName, fileType):
         
     else:
         print 'add_batch failed' 
-        print 'status_code: %s, reason: %s' % (r.status_code, r.reason)        
+        print 'status_code: %s, reason: %s' % (r.status_code, r.reason)
+        print 'body: %s' % r.text        
     
     return r
         
-def close_job(instance, sessionId, jobId):
-    '''http://www.salesforce.com/us/developer/docs/api_asynch/Content/asynch_api_quickstart_close_job.htm'''
-    
-    xml_template = '''<?xml version="1.0" encoding="UTF-8"?>
-    <jobInfo xmlns="http://www.force.com/2009/06/asyncapi/dataload">
-      <state>Closed</state>
-    </jobInfo>'''
-        
-    headers = {
-        'Content-Type': 'application/xml; charset=UTF-8', 
-        'X-SFDC-Session': sessionId
-    }
-    
-    url = BULK_ENDPOINT % {'instance': instance} + '/'+ jobId
-    
-    r = requests.post(url, headers = headers, data = xml_template)
-    
-    if r.status_code == 201:
-        
-        xmltree = parseString(r.text)
-        
-        job_id = xmltree.getElementsByTagName('id')[0].childNodes[0].wholeText
-        
-        print 'close_job successful'
-        print r.text
-        
-    else:
-        print 'close_job failed' 
-        print 'status_code: %s, reason: %s' % (r.status_code, r.reason)        
-
-def check_batches(instance, sessionId, jobId):
-    '''http://www.salesforce.com/us/developer/docs/api_asynch/Content/asynch_api_quickstart_check_status.htm'''
+def get_batches(instance, sessionId, jobId):
+    '''http://www.salesforce.com/us/developer/docs/api_asynch/Content/asynch_api_batches_get_info_all.htm'''
 
     headers = {
         'X-SFDC-Session': sessionId
@@ -166,17 +229,18 @@ def check_batches(instance, sessionId, jobId):
         
         batch_id = xmltree.getElementsByTagName('id')[0].childNodes[0].wholeText
         
-        print 'check_batch successful'
+        print 'get_batch successful'
         print r.text
         
     else:
-        print 'check_batches failed' 
-        print 'status_code: %s, reason: %s' % (r.status_code, r.reason)        
+        print 'get_batches failed' 
+        print 'status_code: %s, reason: %s' % (r.status_code, r.reason)
+        print 'body: %s' % r.text         
     
     return r
         
-def check_batch(instance, sessionId, jobId, batchId):
-    '''http://www.salesforce.com/us/developer/docs/api_asynch/Content/asynch_api_quickstart_check_status.htm'''
+def get_batch(instance, sessionId, jobId, batchId):
+    '''http://www.salesforce.com/us/developer/docs/api_asynch/Content/asynch_api_batches_get_info.htm'''
 
     headers = {
         'X-SFDC-Session': sessionId
@@ -193,17 +257,42 @@ def check_batch(instance, sessionId, jobId, batchId):
         
         batch_id = xmltree.getElementsByTagName('id')[0].childNodes[0].wholeText
         
-        print 'check_batch successful'
+        print 'get_batch successful'
         print r.text
         
     else:
-        print 'check_batch failed' 
-        print 'status_code: %s, reason: %s' % (r.status_code, r.reason)        
+        print 'get_batch failed' 
+        print 'status_code: %s, reason: %s' % (r.status_code, r.reason)
+        print 'body: %s' % r.text         
     
     return r
 
-def retrieve_batch(instance, sessionId, jobId, batchId):
-    '''www.salesforce.com/us/developer/docs/api_asynch/Content/asynch_api_quickstart_retrieve_results.htm'''
+def get_batch_request(instance, sessionId, jobId, batchId):
+    '''http://www.salesforce.com/us/developer/docs/api_asynch/Content/asynch_api_batches_get_request.htm'''
+
+    headers = {
+        'X-SFDC-Session': sessionId
+    }
+
+    data = {}
+    url = BULK_ENDPOINT % {'instance': instance} + '/'+ jobId + '/batch/' + batchId + '/request'
+
+    r = requests.get(url, headers = headers, data = data)
+
+    if r.status_code == 200:
+
+        print 'get_batch_request successful'
+        print r.text
+
+    else:
+        print 'get_batch_request failed' 
+        print 'status_code: %s, reason: %s' % (r.status_code, r.reason)
+        print 'body: %s' % r.text      
+
+    return r
+        
+def get_batch_result(instance, sessionId, jobId, batchId):
+    '''http://www.salesforce.com/us/developer/docs/api_asynch/Content/asynch_api_batches_get_results.htm'''
 
     headers = {
         'X-SFDC-Session': sessionId
@@ -216,11 +305,12 @@ def retrieve_batch(instance, sessionId, jobId, batchId):
 
     if r.status_code == 200:
         
-        print 'check_batch successful'
+        print 'get_batch_result successful'
         print r.text
         
     else:
-        print 'check_batch failed' 
-        print 'status_code: %s, reason: %s' % (r.status_code, r.reason)        
+        print 'get_batch_result failed' 
+        print 'status_code: %s, reason: %s' % (r.status_code, r.reason)
+        print 'body: %s' % r.text       
     
     return r    
