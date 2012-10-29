@@ -3,7 +3,8 @@ if('./libs' not in sys.path): sys.path.append('./libs')
 
 import requests
 import simplejson as json
-import urllib
+
+from xml.dom.minidom import parseString
 
 LOGIN_ENDPOINT = 'https://login.salesforce.com/services/Soap/u/26.0'
 BULK_ENDPOINT = 'https://%(instance)s.salesforce.com/services/async/26.0/job'
@@ -33,7 +34,20 @@ def login(username, password):
     
     r = requests.post(url, headers = headers, data = xml_template%data)
     
-    print r.text
+    if r.status_code == 200:
+    
+        xmltree = parseString(r.text)
+    
+        sessionId = xmltree.getElementsByTagName('sessionId')[0].childNodes[0].wholeText
+        serverUrl = xmltree.getElementsByTagName('serverUrl')[0].childNodes[0].wholeText
+        
+        print 'login successful'
+        print 'sessionId: %s' % sessionId
+        print 'serverUrl: %s' % serverUrl
+    
+    else: 
+        print 'login failed' 
+        print 'status_code: %s, reason: %s' % (r.status_code, r.reason)
     
     return r
     
@@ -49,15 +63,21 @@ def create(instance, sessionId):
     data = {'operation': 'insert', 'object': 'Contact', 'contentType': 'CSV'}
     
     headers = {
-        'Content-Type': 'text/xml; charset=UTF-8', 
-        'Authorization': 'Bearer '+ sessionId
+        'Content-Type': 'application/xml; charset=UTF-8', 
+        'X-SFDC-Session': sessionId
     }
     
     url = BULK_ENDPOINT%{'instance': instance}
     
     r = requests.post(url, headers = headers, data = xml_template%data)
     
-    print r.text
+    if r.status_code == 200:
+        print 'create successful'
+        print r.text
+        
+    else:
+        print 'create failed' 
+        print 'status_code: %s, reason: %s' % (r.status_code, r.reason)        
     
     return r
     
