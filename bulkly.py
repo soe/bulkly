@@ -160,7 +160,7 @@ def main():
             print('Security token cannot be blank.')
     
     # do login                                    
-    login = BULK.login(str(user), str(pw) + str(token), sandbox)
+    login = BULK.login(str(user), str(pw), str(token), sandbox)
     
     if login:
         print('Login successful.')

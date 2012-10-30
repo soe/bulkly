@@ -8,7 +8,8 @@ This command line appplication is written in Python. This app allows CRUD operat
  * bulkly.py - the CLI wrapper is sepearted from sf_bulk.py - the Salesforce bulk API wrapper
 * Multi-Python
   * compatible with Python v 2.6, 2.7, 3.2, and 3.3
-
+* Include easily in other Python apps
+  * sf_bulk.py can be easily included in other Python apps. Refer to comments in the file.
 
 ## How-to
 

@@ -1,6 +1,15 @@
 '''
     Salesforce BULK API wrapper
     http://www.salesforce.com/us/developer/docs/api_asynch/index.htm
+    
+    Include this wrapper easily in your Python app:
+        > import sf_bulk
+        > B = sf_bulk.Bulk() # initialize
+        > B.login('username', 'password', 'token') # token
+        > B.create_job('insert', 'Contact', 'CSV')
+        > B.get_job('jobId')
+        > B.add_batch('jobId', 'data.csv', 'CSV')
+        > B.get_batches('jobId')
 '''
 
 import inspect
@@ -21,7 +30,7 @@ class Bulk(object):
         self.sessionId = ''
 
 
-    def login(self, username, password, sandbox = False):
+    def login(self, username, password, token, sandbox = False):
         '''http://www.salesforce.com/us/developer/docs/api_asynch/Content/asynch_api_quickstart_login.htm'''
 
         xml_template = '''<?xml version="1.0" encoding="utf-8" ?>
@@ -43,8 +52,9 @@ class Bulk(object):
 
         self.username = username
         self.password = password
+        self.token = token
 
-        data = xml_template % {'username': self.username, 'password': self.password}
+        data = xml_template % {'username': self.username, 'password': self.password + self.token}
         
         if sandbox: url = LOGIN_ENDPOINT_SANDBOX
         else: url = LOGIN_ENDPOINT
