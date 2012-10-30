@@ -24,28 +24,28 @@ The file _bulkly.py_ is the CLI app which renders menu, processes user choices a
 ## Menu choices
 
 _Choice 1 - Create Job_
-prompt: jobOperation, jobObject, jobType
+> prompt: jobOperation, jobObject, jobType
 
 _Choice 2 - Get Job_
-prompt: jobId
+> prompt: jobId
 
 _Choice 3 - Close Job_
-prompt: jobId
+> prompt: jobId
 
 _Choice 4 - Abort Job_
-prompt: jobId
+> prompt: jobId
 
 _Choice 5 - Add Batch_
-prompt: jobId, fileName, fileType
+> prompt: jobId, fileName, fileType
 
 _Choice 6 - Get Batches_
-prompt: jobId
+> prompt: jobId
 
 _Choice 7 - Get Batch_
-prompt: jobId, batchId
+> prompt: jobId, batchId
 
 _Choice 8 - Get Batch Request_
-prompt: jobId, batchId
+> prompt: jobId, batchId
 
 _Choice 9 - Get Batch Request_
-prompt: jobId, batchId
+> prompt: jobId, batchId
