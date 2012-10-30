@@ -176,7 +176,6 @@ class Bulk(object):
         
         f = open(fileName, 'rb')
 
-        #r = requests.post(url, headers = headers, data = data, files = {'file': f})
         r = requests.post(url, headers = headers, data = f.read())
         
         f.close()

@@ -65,7 +65,8 @@ def _get_batch_result():
     batchId = raw_input('Enter the batch ID: ')
 
     BULK.get_batch_result(jobId, batchId)
-                           
+ 
+# print menu with list of choices                         
 def print_menu():
     print('\nSalesforce Bulk API CLI')
     
@@ -73,34 +74,39 @@ def print_menu():
         print(str(i + 1) + ') ' + j)
     
     print('0) Exit.\n')
-    
+
+# listen in for user's choice    
 def get_menu_choice(max):
   while True:
     choice = raw_input('> ')
 
+    # choice must be integer
     try:
       choice = int(choice)
     except ValueError:
       print 'Invalid choice. Please choose a value between 0 and', max
       continue
 
+    # choice must be within the range
     if choice > max or choice < 0:
       print 'Invalid choice. Please choose a value between 0 and', max
     else:
       return choice
-      
+
+# show menu    
 def show_menu():
     try:
         while True:
             print_menu()
             choice = get_menu_choice(len(CHOICES0))
             
-            if choice == 0:
+            if choice == 0: # choice 0, bye bye
                 print '\nGoodbye.'
                 return
-            else:
+            else: # other choices
                 globals()['_' + CHOICES1[choice - 1]]()
                 
+    # exit the app, bye bye            
     except KeyboardInterrupt:
         print '\nGoodbye.'
         return
