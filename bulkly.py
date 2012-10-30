@@ -108,7 +108,7 @@ def main():
 
     user = ''
     pw = ''
-    key = ''
+    token = ''
 
     # Parse command line options
     try:
