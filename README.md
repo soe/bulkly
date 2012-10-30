@@ -1,5 +1,15 @@
 This command line appplication is written in Python. This app allows CRUD operations against Salesforce bulk API: http://www.salesforce.com/us/developer/docs/api_asynch/index.htm
 
+## Bonus features
+
+* Standalone app
+  > The app does not require additional libraries
+* Code seperation
+  > bulkly.py - the CLI wrapper is sepearted from sf_bulk.py - the Salesforce bulk API wrapper
+* Multi-Python
+  > compatible with Python v 2.5, 2.6, 2.7 and 3+
+
+
 ## How-to
 
 In your terminal, go to the bulkly folder
