@@ -58,9 +58,9 @@ class Bulk(object):
             sessionId = xmltree.getElementsByTagName('sessionId')[0].childNodes[0].wholeText
             serverUrl = xmltree.getElementsByTagName('serverUrl')[0].childNodes[0].wholeText
 
-            print 'login successful'
-            print 'sessionId: %s' % sessionId
-            print 'serverUrl: %s' % serverUrl
+            print('login successful')
+            print('sessionId: %s' % sessionId)
+            print('serverUrl: %s' % serverUrl)
 
             self.sessionId = sessionId
             self.instance = serverUrl.split('.salesforce.com')[0].split('https://')[1]
@@ -268,11 +268,11 @@ class Bulk(object):
 
     # show success message
     def show_successful_message(self, functionName, r):
-        print functionName + ' - successful'
-        print r.text
+        print(functionName + ' - successful')
+        print(r.text)
             
     # show fail message    
     def show_failed_message(self, functionName, r):
-        print functionName + ' - failed'
-        print 'status_code: %s, reason: %s' % (r.status_code, r.reason)
-        print r.text
+        print(functionName + ' - failed')
+        print('status_code: %s, reason: %s' % (r.status_code, r.reason))
+        print(r.text)
