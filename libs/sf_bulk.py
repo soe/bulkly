@@ -9,6 +9,7 @@ import requests
 from xml.dom.minidom import parseString
 
 LOGIN_ENDPOINT = 'https://login.salesforce.com/services/Soap/u/26.0'
+LOGIN_ENDPOINT_SANDBOX = 'https://test.salesforce.com/services/Soap/u/26.0'
 BULK_ENDPOINT = 'https://%(instance)s.salesforce.com/services/async/26.0/job'
 
 class Bulk(object):
@@ -20,7 +21,7 @@ class Bulk(object):
         self.sessionId = ''
 
 
-    def login(self, username, password):
+    def login(self, username, password, sandbox = False):
         '''http://www.salesforce.com/us/developer/docs/api_asynch/Content/asynch_api_quickstart_login.htm'''
 
         xml_template = '''<?xml version="1.0" encoding="utf-8" ?>
@@ -44,7 +45,9 @@ class Bulk(object):
         self.password = password
 
         data = xml_template % {'username': self.username, 'password': self.password}
-        url = LOGIN_ENDPOINT
+        
+        if sandbox: url = LOGIN_ENDPOINT_SANDBOX
+        else: url = LOGIN_ENDPOINT
 
         r = requests.post(url, headers = headers, data = data)
 

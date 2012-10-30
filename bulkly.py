@@ -116,12 +116,13 @@ def main():
     user = ''
     pw = ''
     token = ''
+    sandbox = False
 
     # Parse command line options
     try:
-        opts, args = getopt.getopt(sys.argv[1:], '', ['user=', 'pw=', 'token='])
+        opts, args = getopt.getopt(sys.argv[1:], '', ['user=', 'pw=', 'token=', 'sandbox='])
     except getopt.error, msg:
-        print 'python bulkly.py --user [username] --pw [password] --token [token]'
+        print 'python bulkly.py --user [username] --pw [password] --token [token] --sandbox [sandbox]'
         sys.exit(2)
 
     # Process options
@@ -132,7 +133,10 @@ def main():
             pw = arg
         elif option == '--token':
             token = arg
-    
+        elif option == '--sandbox':
+            if arg == 'sandbox':
+                sandbox = True
+            
     # prompt for user to enter if not defined yet...        
     while not user:
         user = raw_input('Please enter your username: ')
@@ -152,7 +156,7 @@ def main():
             print 'Security token cannot be blank.'
     
     # do login                                    
-    login = BULK.login(str(user), str(pw) + str(token))
+    login = BULK.login(str(user), str(pw) + str(token), sandbox)
     
     if login:
         print 'Login successful.'
