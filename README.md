@@ -4,4 +4,4 @@ In your terminal, go to the bulkly folder
 > cd bulkly
 
 Then run the following
-> python bulkly.py
+> python bulkly.py --user [User Name] --pw [Password] --token [Token]
