@@ -69,7 +69,7 @@ class Bulk(object):
 
             return None
 
-    def create_job(self, jobObject, jobType):
+    def create_job(self, jobOperation, jobObject, jobType):
         '''http://www.salesforce.com/us/developer/docs/api_asynch/Content/asynch_api_jobs_create.htm'''
 
         jobTypes = {'CSV': 'text/csv', 'XML': 'text/xml', 'ZIP_CSV': 'zip/csv', 'ZIP_XML': 'zip/xml'}
@@ -86,7 +86,7 @@ class Bulk(object):
             'X-SFDC-Session': self.sessionId
         }
 
-        data = xml_template % {'operation': 'insert', 'object': jobObject, 'contentType': jobType}
+        data = xml_template % {'operation': jobOperation, 'object': jobObject, 'contentType': jobType}
         url = BULK_ENDPOINT % {'instance': self.instance}
 
         r = requests.post(url, headers = headers, data = data)

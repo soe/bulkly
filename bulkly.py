@@ -15,10 +15,11 @@ CHOICES0 = ['Create Job', 'Get Job', 'Close Job', 'Abort Job', 'Add Batch', 'Get
 CHOICES1 = ['create_job', 'get_job', 'close_job', 'abort_job', 'add_batch', 'get_batches', 'get_batch', 'get_batch_request', 'get_batch_result']
 
 def _create_job():
+    jobOperation = raw_input('Enter job operation (insert, query): ')
     jobObject = raw_input('Enter job object (i.e: Contact): ')
     jobType = raw_input('Enter job type (CSV, XML): ')
     
-    BULK.create_job(jobObject, jobType)
+    BULK.create_job(jobOperation, jobObject, jobType)
 
 def _get_job():
     jobId = raw_input('Enter job ID to get: ')

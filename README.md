@@ -8,6 +8,9 @@ In your terminal, go to the bulkly folder
 Then run the following
 > python bulkly.py --user [User Name] --pw [Password] --token [Token]
 
+Example
+> python bulkly.py --user soe@cs.jsp2js.dev --pw FORCE2012 --token GGrFnoIJutesEweBNPxyCihx2
+
 ## Code structure
 
 The app has following structure:
